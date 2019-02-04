@@ -1,0 +1,24 @@
+.hexagon {
+  position: absolute;
+  background-image: url(hexagon_bg.svg);
+  background-size: 100px 100px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 200px;
+  height: 200px;
+  transform: rotate(30deg);
+}
+
+.has-player {
+  background-image: url(hexagon-color.png);
+  background-size: 50px 50px;
+}
+
+.field {
+	transform: perspective(1500px) rotateX(70deg);
+	  z-index: 0;
+}
+
+input {
+	z-index: 450;
+}
