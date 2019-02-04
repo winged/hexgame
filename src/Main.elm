@@ -16,7 +16,7 @@ main =
   Browser.sandbox {
           init = {
                   player = {
-                        pos   = AxialHex(0, 0),
+                        pos   = AxialHex(3, 3),
                         name  = "Dave",
                         items = [(Coin, 10), (Food, 15)] },
                   arena = Dict.empty },
@@ -96,15 +96,6 @@ update msg mdl =
     Noop -> mdl
 
 
-controls = [
-        button [ onClick (Move W)  ] [ text "west" ],
-        button [ onClick (Move SE) ] [ text "south-east" ],
-        button [ onClick (Move NE) ] [ text "north-east" ],
-        node "br" [] [],
-        button [ onClick (Move E)  ] [ text "east" ],
-        button [ onClick (Move NW) ] [ text "north-west" ],
-        button [ onClick (Move SW) ] [ text "south-west" ] ]
-
 layout = {
         orientation = orientationLayoutPointy,
         origin = (0, 0),
@@ -112,29 +103,47 @@ layout = {
   }
 
 
+directions = [W, SE, NE, E , NW, SW]
+
+
+
 hex2pixel pos =
         hexToPoint layout pos
 
+clickableIfNeighbor fpos ppos =
+        let clickableDirs = List.filter (\dir -> eq fpos (neighbor ppos dir)) directions
+        in
+            List.map (\dir -> onClick (Move dir)) clickableDirs
 
-viewField: Player -> Field -> Html msg
+
+makeClass hasPlayer isClickable =
+        case (hasPlayer, isClickable) of
+                (False, False) -> class "hexagon"
+                (False, True)  -> class "hexagon clickable"
+                (True, False)  -> class "hexagon has-player"
+                (True, True)   -> class "hexagon has-player" -- fail case, just for completeness
+
+
+viewField: Player -> Field -> Html Msg
 viewField player field =
         let (pxX, pxY) = hex2pixel field.pos
             posStyle = [style "left" (String.fromFloat pxX ++ "px"),
                         style "top"  (String.fromFloat pxY ++ "px")]
+            clickableEvents = clickableIfNeighbor field.pos player.pos
+            isClickable = not (List.isEmpty clickableEvents)
+            hasPlayer = eq player.pos field.pos
+            classes = makeClass hasPlayer isClickable
         in
-           if eq player.pos field.pos
-              then div ((class "hexagon has-player") :: posStyle)  []
-              else div ((class "hexagon") :: posStyle)  []
+            div (classes :: posStyle ++ clickableEvents)  []
 
--- view: Model -> Html Msg
+
+view: Model -> Html Msg
 view mdl =
         let fields = List.map (viewField mdl.player) (surroundings mdl)
             info = [
                      div [class "position"] [ text ("Q = " ++ String.fromInt (intQ mdl.player.pos)) ],
                      div [class "position"] [ text ("R = " ++ String.fromInt (intR mdl.player.pos)) ] ]
         in
-        div [] (controls ++ [
-                node "style" [type_ "text/css"] [ text "@import url(assets/grid.css);" ],
+        div [] [node "style" [type_ "text/css"] [ text "@import url(assets/grid.css);" ],
                 div [] [],
-                div [class "field"] (fields)
-         ] ++ info)
+                div [class "field"] (fields) ]

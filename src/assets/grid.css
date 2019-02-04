@@ -4,19 +4,24 @@
   background-size: 100px 100px;
   background-position: center;
   background-repeat: no-repeat;
-  width: 200px;
-  height: 200px;
-  transform: rotate(30deg);
+  width: 100px;
+  height: 100px;
 }
 
 .has-player {
   background-image: url(hexagon-color.png);
   background-size: 50px 50px;
+  z-index: -150;
 }
+
+.hexagon.clickable:hover {
+  background-image: url(hexagon_hover.svg);
+}
+
 
 .field {
 	transform: perspective(1500px) rotateX(70deg);
-	  z-index: 0;
+	z-index: -100;
 }
 
 input {
