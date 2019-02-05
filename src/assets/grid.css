@@ -27,7 +27,8 @@ body {
 }
 
 .board {
-  transform: perspective(1500px) rotateX(70deg);
+  transform: translate(50vw, 50vh);
+  background-color: lightblue;
   z-index: -100;
 }
 

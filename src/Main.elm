@@ -30,11 +30,11 @@ init  _ = (initialState, Cmd.none)
 
 initialState = {
         player = {
-                pos   = AxialHex(1, 3),
+                pos   = AxialHex(0, 0),
                 name  = "Dave",
                 items = [(Coin, 10), (Food, 15)] },
         arena = Dict.empty,
-        centerPlayer = Animation.style [ Animation.translate (px 400) (px 400 ) ] }
+        centerPlayer = Animation.style [ Animation.translate (px 0) (px 0 ) ] }
 
 
 subscriptions : Model -> Sub Msg
@@ -95,8 +95,8 @@ move mdl dir =
         let player = mdl.player
             newPlayer = { player | pos = neighbor player.pos dir}
             (ppx, ppy) = hex2pixel newPlayer.pos
-            centerX = 500 - ppx
-            centerY = 500 - ppy
+            centerX = -ppx
+            centerY = -ppy
         in
            {mdl | player=newPlayer,
                   centerPlayer = Animation.interrupt [
@@ -110,8 +110,8 @@ surroundings {player, arena} =
 
         let pq = intQ player.pos
             pr = intR player.pos
-            rangeX = List.range (pq - 12) (pq + 13)
-            rangeY = List.range (pr - 11) (pr + 13)
+            rangeX = List.range (pq - 21) (pq + 21)
+            rangeY = List.range (pr - 10) (pr + 10)
             elements = List.concat (List.map (\x -> List.map (\y -> AxialHex (x, y)) rangeY) rangeX)
         in
            List.map (\pos -> fieldAt pos arena) elements
@@ -156,8 +156,8 @@ makeClass hasPlayer isClickable navigable =
 
 isBlock: Hex -> Bool
 isBlock pos =
-        let seed      = Random.initialSeed ((intQ pos) * (intR pos))
-            (val, _)  = Random.step (Random.int 0 3) seed
+        let seed      = Random.initialSeed (((intQ pos) - 31337) * ((intR pos) + 1337))
+            (val, _)  = Random.step (Random.int 0 2) seed
         in
            val == 0
 
