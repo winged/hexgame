@@ -12,7 +12,7 @@
    viewBox="0 0 200 200"
    version="1.1"
    id="svg3763"
-   sodipodi:docname="hexagon__hover.svg"
+   sodipodi:docname="hexagon_hover.svg"
    inkscape:version="0.92.4 5da689c313, 2019-01-14">
   <metadata
      id="metadata3769">
@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -42,7 +42,7 @@
      id="namedview3765"
      showgrid="false"
      inkscape:zoom="1.485"
-     inkscape:cx="171.38839"
+     inkscape:cx="36.034855"
      inkscape:cy="205.38363"
      inkscape:window-x="732"
      inkscape:window-y="392"
@@ -50,7 +50,7 @@
      inkscape:current-layer="svg3763" />
   <polygon
      style="fill:#0000ff;fill-opacity:0;stroke:#85af2c;stroke-width:11;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     points="52,16.861561 148,16.861561 196,100 148,183.13844 52,183.13844 4,100 "
+     points="148,16.861561 196,100 148,183.13844 52,183.13844 4,100 52,16.861561 "
      id="polygon3761"
-     transform="matrix(-0.70648498,0.40788929,-0.40788929,-0.70648498,211.43743,129.85957)" />
+     transform="matrix(-0.4078893,0.70648498,-0.70648498,-0.4078893,211.43743,70.140433)" />
 </svg>

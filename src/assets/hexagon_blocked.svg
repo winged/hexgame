@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -42,15 +42,15 @@
      id="namedview3765"
      showgrid="false"
      inkscape:zoom="1.485"
-     inkscape:cx="167.01129"
+     inkscape:cx="31.657755"
      inkscape:cy="205.38363"
      inkscape:window-x="106"
      inkscape:window-y="191"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg3763" />
   <polygon
-     style="fill:#000000;stroke:#000000;stroke-width:2.5px;fill-opacity:1"
-     points="4,100 52,16.861561 148,16.861561 196,100 148,183.13844 52,183.13844 "
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.5px"
+     points="52,16.861561 148,16.861561 196,100 148,183.13844 52,183.13844 4,100 "
      id="polygon3761"
-     transform="rotate(150,100,100)" />
+     transform="rotate(60,100,100)" />
 </svg>

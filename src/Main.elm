@@ -110,8 +110,8 @@ surroundings {player, arena} =
 
         let pq = intQ player.pos
             pr = intR player.pos
-            rangeX = List.range (pq - 21) (pq + 21)
-            rangeY = List.range (pr - 10) (pr + 10)
+            rangeX = List.range (pq - 16) (pq + 13)
+            rangeY = List.range (pr - 13) (pr + 13)
             elements = List.concat (List.map (\x -> List.map (\y -> AxialHex (x, y)) rangeY) rangeX)
         in
            List.map (\pos -> fieldAt pos arena) elements
@@ -125,8 +125,23 @@ update msg mdl =
     Animate animMsg -> ({mdl|centerPlayer = Animation.update animMsg mdl.centerPlayer}, Cmd.none)  -- TODO implement
 
 
+orientationLayoutFlatTop: Orientation
+orientationLayoutFlatTop = {
+        forward_matrix = {
+                f0 = 3.0 / 2.0,
+                f1 = 0.0,
+                f2 = sqrt(3.0) / 2.0,
+                f3 = sqrt(3.0) },
+        inverse_matrix = {
+                f0 = 2.0 / 3.0,
+                f1 = 0.0,
+                f2 = -1.0 / 3.0,
+                f3 = sqrt(3.0) / 3.0 },
+        start_angle = 0.0 }
+
+
 layout = {
-        orientation = orientationLayoutPointy,
+        orientation = orientationLayoutFlatTop,
         origin = (0, 0),
         size = (50,50)
   }
