@@ -1,6 +1,7 @@
 
 .PHONY: build
 build: build/index.html
+	@rm -rf build
 	@elm make src/Main.elm --output=build/index.html
 	@cp -r src/assets build/assets
 
