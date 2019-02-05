@@ -5,6 +5,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, button, div, text, node)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (type_, class, style)
+import Random
 
 import Hexagons.Hex exposing (..)
 import Hexagons.Layout exposing (..)
@@ -29,7 +30,7 @@ init  _ = (initialState, Cmd.none)
 
 initialState = {
         player = {
-                pos   = AxialHex(3, 3),
+                pos   = AxialHex(1, 3),
                 name  = "Dave",
                 items = [(Coin, 10), (Food, 15)] },
         arena = Dict.empty,
@@ -143,12 +144,23 @@ clickableIfNeighbor fpos ppos =
             List.map (\dir -> onClick (Move dir)) clickableDirs
 
 
-makeClass hasPlayer isClickable =
-        case (hasPlayer, isClickable) of
-                (False, False) -> class "hexagon"
-                (False, True)  -> class "hexagon clickable"
-                (True, False)  -> class "hexagon has-player"
-                (True, True)   -> class "hexagon has-player" -- fail case, just for completeness
+makeClass hasPlayer isClickable navigable =
+        case navigable of
+                True -> case (hasPlayer, isClickable) of
+                        (False, False) -> class "hexagon"
+                        (False, True)  -> class "hexagon clickable"
+                        (True, False)  -> class "hexagon has-player"
+                        (True, True)   -> class "hexagon has-player" -- fail case, just for completeness
+                False -> class "hexagon blocked"
+
+
+isBlock: Hex -> Bool
+isBlock pos =
+        let seed      = Random.initialSeed ((intQ pos) * (intR pos))
+            (val, _)  = Random.step (Random.int 0 3) seed
+        in
+           val == 0
+
 
 
 fieldPosStyle field =
@@ -161,10 +173,11 @@ viewField: Model -> Field -> Html Msg
 viewField mdl field =
         let player = mdl.player
             posStyle = fieldPosStyle field
-            clickableEvents = clickableIfNeighbor field.pos player.pos
-            isClickable = not (List.isEmpty clickableEvents)
+            navigable = not (isBlock field.pos)
+            clickableEvents = if navigable then clickableIfNeighbor field.pos player.pos else []
+            isClickable = navigable && not (List.isEmpty clickableEvents)
             hasPlayer = eq player.pos field.pos
-            classes = makeClass hasPlayer isClickable
+            classes = makeClass hasPlayer isClickable navigable
         in
             div (classes :: posStyle ++ clickableEvents)  []
 

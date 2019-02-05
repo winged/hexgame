@@ -22,12 +22,15 @@ body {
   background-image: url(hexagon_hover.svg);
 }
 
+.hexagon.blocked {
+  background-image: url(hexagon_blocked.svg);
+}
 
 .board {
-	transform: perspective(1500px) rotateX(70deg);
-	z-index: -100;
+  transform: perspective(1500px) rotateX(70deg);
+  z-index: -100;
 }
 
 input {
-	z-index: 450;
+  z-index: 450;
 }
