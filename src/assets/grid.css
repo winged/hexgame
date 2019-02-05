@@ -23,7 +23,7 @@ body {
 }
 
 
-.field {
+.board {
 	transform: perspective(1500px) rotateX(70deg);
 	z-index: -100;
 }

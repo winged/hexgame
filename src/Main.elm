@@ -1,5 +1,6 @@
 
 import Browser
+import Debug
 import Dict exposing (Dict)
 import Html exposing (Html, button, div, text, node)
 import Html.Events exposing (onClick)
@@ -8,21 +9,36 @@ import Html.Attributes exposing (type_, class, style)
 import Hexagons.Hex exposing (..)
 import Hexagons.Layout exposing (..)
 
+import Animation exposing (px)
+
 type Item = Bomb
           | Food
           | Coin
 
 main =
-  Browser.sandbox {
-          init = {
-                  player = {
-                        pos   = AxialHex(3, 3),
-                        name  = "Dave",
-                        items = [(Coin, 10), (Food, 15)] },
-                  arena = Dict.empty },
+  Browser.document {
+          init = init,
           view = view,
-          update = update
+          update = update,
+          subscriptions = subscriptions
   }
+
+init: () -> (Model, Cmd Msg)
+init  _ = (initialState, Cmd.none)
+
+
+initialState = {
+        player = {
+                pos   = AxialHex(3, 3),
+                name  = "Dave",
+                items = [(Coin, 10), (Food, 15)] },
+        arena = Dict.empty,
+        centerPlayer = Animation.style [ Animation.translate (px 400) (px 400 ) ] }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Animation.subscription Animate [ model.centerPlayer ]
 
 
 type alias BagItem = (Item, Int)
@@ -64,16 +80,28 @@ fieldAt pos arena =
 
 type alias Model = {
         player: Player,
-        arena: Arena }
+        arena: Arena,
+        centerPlayer: Animation.State }
 
 
 type Msg = Move Direction
          | Noop
+         | Animate Animation.Msg
 
 
-move: Player -> Direction -> Player
-move player dir =
-        { player | pos = neighbor player.pos dir}
+move: Model -> Direction -> Model
+move mdl dir =
+        let player = mdl.player
+            newPlayer = { player | pos = neighbor player.pos dir}
+            (ppx, ppy) = hex2pixel newPlayer.pos
+            centerX = 500 - ppx
+            centerY = 500 - ppy
+        in
+           {mdl | player=newPlayer,
+                  centerPlayer = Animation.interrupt [
+                          Animation.to [ Animation.translate (px centerX) (px centerY)]]
+                          mdl.centerPlayer
+           }
 
 
 surroundings: Model -> List Field
@@ -81,17 +109,19 @@ surroundings {player, arena} =
 
         let pq = intQ player.pos
             pr = intR player.pos
-            rangeX = List.range (pq - 15) (pq + 17)
-            rangeY = List.range (pr - 15) (pr + 17)
+            rangeX = List.range (pq - 12) (pq + 13)
+            rangeY = List.range (pr - 11) (pr + 13)
             elements = List.concat (List.map (\x -> List.map (\y -> AxialHex (x, y)) rangeY) rangeX)
         in
            List.map (\pos -> fieldAt pos arena) elements
 
 
+update: Msg -> Model -> (Model, Cmd Msg)
 update msg mdl =
   case msg of
-    Move dir -> {mdl | player = move mdl.player dir }
-    Noop -> mdl
+    Move dir -> (move mdl dir, Cmd.none)
+    Noop -> (mdl, Cmd.none)
+    Animate animMsg -> ({mdl|centerPlayer = Animation.update animMsg mdl.centerPlayer}, Cmd.none)  -- TODO implement
 
 
 layout = {
@@ -102,7 +132,6 @@ layout = {
 
 
 directions = [W, SE, NE, E , NW, SW]
-
 
 
 hex2pixel pos =
@@ -122,11 +151,16 @@ makeClass hasPlayer isClickable =
                 (True, True)   -> class "hexagon has-player" -- fail case, just for completeness
 
 
-viewField: Player -> Field -> Html Msg
-viewField player field =
+fieldPosStyle field =
         let (pxX, pxY) = hex2pixel field.pos
-            posStyle = [style "left" (String.fromFloat pxX ++ "px"),
-                        style "top"  (String.fromFloat pxY ++ "px")]
+        in
+            [style "left" (String.fromFloat pxX ++ "px"),
+             style "top"  (String.fromFloat pxY ++ "px")]
+
+viewField: Model -> Field -> Html Msg
+viewField mdl field =
+        let player = mdl.player
+            posStyle = fieldPosStyle field
             clickableEvents = clickableIfNeighbor field.pos player.pos
             isClickable = not (List.isEmpty clickableEvents)
             hasPlayer = eq player.pos field.pos
@@ -135,13 +169,19 @@ viewField player field =
             div (classes :: posStyle ++ clickableEvents)  []
 
 
-view: Model -> Html Msg
+view: Model -> Browser.Document Msg
 view mdl =
-        let fields = List.map (viewField mdl.player) (surroundings mdl)
+        let fields = List.map (viewField mdl) (surroundings mdl)
             info = [
                      div [class "position"] [ text ("Q = " ++ String.fromInt (intQ mdl.player.pos)) ],
                      div [class "position"] [ text ("R = " ++ String.fromInt (intR mdl.player.pos)) ] ]
         in
-        div [] [node "style" [type_ "text/css"] [ text "@import url(assets/grid.css);" ],
-                div [] [],
-                div [class "field"] (fields) ]
+           {
+                   title = "Hex Game",
+                   body = [
+                           div [] [node "style" [type_ "text/css"] [ text "@import url(assets/grid.css);" ],
+                           div [] [],
+                           div [class "board"] [
+                                   div ((class "field") :: Animation.render mdl.centerPlayer) (fields) ] ]
+                                   ]
+                   }
