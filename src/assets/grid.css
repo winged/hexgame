@@ -8,6 +8,10 @@
   height: 100px;
 }
 
+body {
+  overflow: hidden;
+}
+
 .has-player {
   background-image: url(hexagon-color.png);
   background-size: 50px 50px;

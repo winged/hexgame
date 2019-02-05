@@ -81,10 +81,8 @@ surroundings {player, arena} =
 
         let pq = intQ player.pos
             pr = intR player.pos
-            -- rangeX = List.range (pq - 20) (pq + 20)
-            -- rangeY = List.range (pr - 20) (pr + 20)
-            rangeX = List.range (-5) (20)
-            rangeY = List.range (-5) (20)
+            rangeX = List.range (pq - 15) (pq + 17)
+            rangeY = List.range (pr - 15) (pr + 17)
             elements = List.concat (List.map (\x -> List.map (\y -> AxialHex (x, y)) rangeY) rangeX)
         in
            List.map (\pos -> fieldAt pos arena) elements
