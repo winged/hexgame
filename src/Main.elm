@@ -2,9 +2,9 @@
 import Browser
 import Debug
 import Dict exposing (Dict)
-import Html exposing (Html, button, div, text, node)
+import Html exposing (Html, button, div, text, node, a, br)
 import Html.Events exposing (onClick)
-import Html.Attributes exposing (type_, class, style)
+import Html.Attributes exposing (type_, class, style, href)
 import Random
 
 import Hexagons.Hex exposing (..)
@@ -185,9 +185,6 @@ viewField mdl field =
 view: Model -> Browser.Document Msg
 view mdl =
         let fields = List.map (viewField mdl) (surroundings mdl)
-            info = [
-                     div [class "position"] [ text ("Q = " ++ String.fromInt (intQ mdl.player.pos)) ],
-                     div [class "position"] [ text ("R = " ++ String.fromInt (intR mdl.player.pos)) ] ]
         in
            {
                    title = "Hex Game",
@@ -195,6 +192,9 @@ view mdl =
                            div [] [node "style" [type_ "text/css"] [ text "@import url(assets/grid.css);" ],
                            div [] [],
                            div [class "board"] [
-                                   div ((class "field") :: Animation.render mdl.centerPlayer) (fields) ] ]
-                                   ]
-                   }
+                                   div ((class "field") :: Animation.render mdl.centerPlayer) (fields) ] ],
+
+                           div [class "info"] [
+                                   text "Copyright: Dave V",
+                                   br [] [],
+                                   a [href "https://github.com/winged/hexgame"] [text "Source @ Github"] ] ] }
