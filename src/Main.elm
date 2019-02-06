@@ -1,11 +1,16 @@
 
 import Browser
 import Debug
+import Json.Decode as Json
 import Dict exposing (Dict)
-import Html exposing (Html, button, div, text, node, a, br)
-import Html.Events exposing (onClick)
-import Html.Attributes exposing (type_, class, style, href)
+import Html exposing (Html, button, div, text, node, a, hr)
+import Html.Events exposing (onClick, on)
+import Html.Attributes exposing (type_, class, style, href, tabindex, id)
 import Random
+import Browser.Dom as Dom
+import Task
+
+import Keyboard.Event exposing (KeyboardEvent, decodeKeyboardEvent)
 
 import Hexagons.Hex exposing (..)
 import Hexagons.Layout exposing (..)
@@ -25,7 +30,9 @@ main =
   }
 
 init: () -> (Model, Cmd Msg)
-init  _ = (initialState, Cmd.none)
+init  _ = (initialState,
+           Dom.focus "outermost"
+           |> Task.attempt (always Noop))
 
 
 initialState = {
@@ -88,6 +95,8 @@ type alias Model = {
 type Msg = Move Direction
          | Noop
          | Animate Animation.Msg
+         | HandleKeyboardEvent KeyboardEvent
+
 
 
 move: Model -> Direction -> Model
@@ -117,12 +126,45 @@ surroundings {player, arena} =
            List.map (\pos -> fieldAt pos arena) elements
 
 
+tryMove: Model -> Direction -> Model
+tryMove mdl dir =
+        let
+            dest = neighbor mdl.player.pos dir
+        in
+        if isBlock dest
+           then mdl
+           else move mdl dir
+
+
+handleKeyboard: KeyboardEvent -> Model -> (Model, Cmd Msg)
+handleKeyboard evt mdl =
+     case evt.key of
+             -- "right handed" keys - WASD
+             Just "d" -> (tryMove mdl NE, Cmd.none)
+             Just "q" -> (tryMove mdl SW, Cmd.none)
+             Just "w" -> (tryMove mdl SE, Cmd.none)
+             Just "s" -> (tryMove mdl NW, Cmd.none)
+             Just "e" -> (tryMove mdl E,  Cmd.none)
+             Just "a" -> (tryMove mdl W,  Cmd.none)
+
+             -- "left handed" keys - IJKL
+             Just "l" -> (tryMove mdl NE, Cmd.none)
+             Just "u" -> (tryMove mdl SW, Cmd.none)
+             Just "i" -> (tryMove mdl SE, Cmd.none)
+             Just "k" -> (tryMove mdl NW, Cmd.none)
+             Just "o" -> (tryMove mdl E,  Cmd.none)
+             Just "j" -> (tryMove mdl W,  Cmd.none)
+
+             _        -> (mdl, Cmd.none)
+
+
 update: Msg -> Model -> (Model, Cmd Msg)
 update msg mdl =
   case msg of
     Move dir -> (move mdl dir, Cmd.none)
     Noop -> (mdl, Cmd.none)
-    Animate animMsg -> ({mdl|centerPlayer = Animation.update animMsg mdl.centerPlayer}, Cmd.none)  -- TODO implement
+    Animate animMsg -> ({mdl|centerPlayer = Animation.update animMsg mdl.centerPlayer}, Cmd.none)
+    HandleKeyboardEvent evt -> handleKeyboard evt mdl
 
 
 orientationLayoutFlatTop: Orientation
@@ -204,12 +246,19 @@ view mdl =
            {
                    title = "Hex Game",
                    body = [
+                     div [id "outermost",
+                          tabindex 0,
+                          on "keydown" <|
+                                  Json.map HandleKeyboardEvent decodeKeyboardEvent ] [
                            div [] [node "style" [type_ "text/css"] [ text "@import url(assets/grid.css);" ],
                            div [] [],
-                           div [class "board"] [
-                                   div ((class "field") :: Animation.render mdl.centerPlayer) (fields) ] ],
+                           div [class "board" ] [
+                                div ((class "field") :: Animation.render mdl.centerPlayer) (fields) ] ],
 
                            div [class "info"] [
-                                   text "Copyright: Dave V",
-                                   br [] [],
-                                   a [href "https://github.com/winged/hexgame"] [text "Source @ Github"] ] ] }
+                                   text "Copyright: ",
+                                   a [href "https://winged.ch"] [text "Dave V"],
+                                   hr [] [],
+                                   text "Use Keys UIOJKL (left handed or QWEASD (right handed) for navigation",
+                                   hr [] [],
+                                   a [href "https://github.com/winged/hexgame"] [text "Source @ Github"] ] ] ] }

@@ -41,8 +41,8 @@ input {
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
-	width: 180px;
-	height: 36px;
+	width: 220px;
+	height: 100px;
 	font-size: 13px;
 	font-family: sans-serif;
 	color: #ddd;
@@ -56,4 +56,8 @@ input {
 
 .info a {
 	color: #babaff;
+}
+
+#outermost {
+	outline: none;
 }
