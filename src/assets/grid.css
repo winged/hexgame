@@ -22,8 +22,11 @@ body {
   background-image: url(hexagon_hover.svg);
 }
 
-.hexagon.blocked {
+.hexagon.block {
   background-image: url(hexagon_blocked.svg);
+}
+.hexagon.hole {
+  background-image: url(hexagon_hole.svg);
 }
 
 .board {

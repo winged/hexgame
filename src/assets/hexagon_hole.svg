@@ -12,7 +12,7 @@
    viewBox="0 0 200 200"
    version="1.1"
    id="svg3763"
-   sodipodi:docname="hexagon__filled.svg"
+   sodipodi:docname="hexagon_hole.svg"
    inkscape:version="0.92.4 5da689c313, 2019-01-14">
   <metadata
      id="metadata3769">
@@ -22,12 +22,26 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs3767" />
+     id="defs3767">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1248"
+       x="-0.12987537"
+       width="1.2597507"
+       y="-0.14996716"
+       height="1.2999343">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="10.39003"
+         id="feGaussianBlur1250" />
+    </filter>
+  </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -42,15 +56,15 @@
      id="namedview3765"
      showgrid="false"
      inkscape:zoom="1.485"
-     inkscape:cx="308.08873"
+     inkscape:cx="172.73519"
      inkscape:cy="205.38363"
      inkscape:window-x="732"
      inkscape:window-y="392"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg3763" />
   <polygon
-     style="fill:none;stroke:#000000;stroke-width:2.5px"
-     points="4,100 52,16.861561 148,16.861561 196,100 148,183.13844 52,183.13844 "
+     style="fill:none;stroke:#000000;stroke-width:2.9681058;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1248)"
+     points="148,16.861561 196,100 148,183.13844 52,183.13844 4,100 52,16.861561 "
      id="polygon3761"
-     transform="rotate(150,100,100)" />
+     transform="matrix(-0.32032214,0.55481422,-0.55481422,-0.32032214,187.51364,76.550792)" />
 </svg>
